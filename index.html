@@ -1,0 +1,776 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>App Search Hub</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🔍</text></svg>">
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        * {
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .gradient-text {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .theme-transition {
+            transition: all 0.5s ease;
+        }
+        
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        
+        .card-hover:hover {
+            transform: translateY(-5px);
+        }
+        
+        .glass-effect {
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+        
+        .theme-light {
+            --bg-gradient: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            --card-bg: rgba(255, 255, 255, 0.8);
+            --text-color: #2d3748;
+            --border-color: rgba(226, 232, 240, 0.8);
+            --accent-color: #4a5568;
+            --button-gradient: linear-gradient(135deg, #4a5568 0%, #2d3748 100%);
+            --hover-color: rgba(237, 242, 247, 0.8);
+        }
+        
+        .theme-dark {
+            --bg-gradient: linear-gradient(135deg, #1a202c 0%, #2d3748 100%);
+            --card-bg: rgba(45, 55, 72, 0.8);
+            --text-color: #f7fafc;
+            --border-color: rgba(74, 85, 104, 0.8);
+            --accent-color: #e2e8f0;
+            --button-gradient: linear-gradient(135deg, #718096 0%, #4a5568 100%);
+            --hover-color: rgba(74, 85, 104, 0.8);
+        }
+        
+        .theme-brown {
+            --bg-gradient: linear-gradient(135deg, #fed7aa 0%, #fdba74 100%);
+            --card-bg: rgba(255, 255, 255, 0.8);
+            --text-color: #7c2d12;
+            --border-color: rgba(251, 211, 141, 0.8);
+            --accent-color: #7c2d12;
+            --button-gradient: linear-gradient(135deg, #d97706 0%, #b45309 100%);
+            --hover-color: rgba(254, 243, 199, 0.8);
+        }
+        
+        .theme-gray {
+            --bg-gradient: linear-gradient(135deg, #edf2f7 0%, #e2e8f0 100%);
+            --card-bg: rgba(255, 255, 255, 0.8);
+            --text-color: #4a5568;
+            --border-color: rgba(226, 232, 240, 0.8);
+            --accent-color: #4a5568;
+            --button-gradient: linear-gradient(135deg, #718096 0%, #4a5568 100%);
+            --hover-color: rgba(237, 242, 247, 0.8);
+        }
+        
+        .theme-green {
+            --bg-gradient: linear-gradient(135deg, #c6f6d5 0%, #9ae6b4 100%);
+            --card-bg: rgba(255, 255, 255, 0.8);
+            --text-color: #22543d;
+            --border-color: rgba(167, 243, 208, 0.8);
+            --accent-color: #22543d;
+            --button-gradient: linear-gradient(135deg, #38a169 0%, #2f855a 100%);
+            --hover-color: rgba(198, 246, 213, 0.8);
+        }
+        
+        .theme-blue {
+            --bg-gradient: linear-gradient(135deg, #bee3f8 0%, #90cdf4 100%);
+            --card-bg: rgba(255, 255, 255, 0.8);
+            --text-color: #2c5282;
+            --border-color: rgba(144, 205, 244, 0.8);
+            --accent-color: #2c5282;
+            --button-gradient: linear-gradient(135deg, #3182ce 0%, #2b6cb0 100%);
+            --hover-color: rgba(190, 227, 248, 0.8);
+        }
+        
+        .theme-purple {
+            --bg-gradient: linear-gradient(135deg, #e9d5ff 0%, #d8b4fe 100%);
+            --card-bg: rgba(255, 255, 255, 0.8);
+            --text-color: #6b46c1;
+            --border-color: rgba(216, 180, 254, 0.8);
+            --accent-color: #6b46c1;
+            --button-gradient: linear-gradient(135deg, #805ad5 0%, #6b46c1 100%);
+            --hover-color: rgba(233, 213, 255, 0.8);
+        }
+        
+        body {
+            background: var(--bg-gradient);
+            color: var(--text-color);
+            transition: background 0.5s ease, color 0.5s ease;
+        }
+        
+        .theme-card {
+            background: var(--card-bg);
+            border-color: var(--border-color);
+            color: var(--text-color);
+        }
+        
+        .theme-button {
+            background: var(--button-gradient);
+            color: white;
+        }
+        
+        .theme-input {
+            background: var(--card-bg);
+            border-color: var(--border-color);
+            color: var(--text-color);
+        }
+        
+        .theme-hover:hover {
+            background: var(--hover-color);
+        }
+        
+        .selected-store {
+            border: 2px solid;
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.3);
+        }
+        
+        .store-checkbox {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+            border: 2px solid var(--border-color);
+            background: var(--card-bg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+        
+        .store-checkbox.checked {
+            background: var(--accent-color);
+            border-color: var(--accent-color);
+        }
+        
+        .store-checkbox.checked::after {
+            content: '✓';
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        
+        .search-mode-btn.active {
+            background: var(--button-gradient);
+            color: white;
+        }
+        
+        .search-mode-btn:not(.active) {
+            background: var(--card-bg);
+            color: var(--text-color);
+        }
+    </style>
+</head>
+<body class="theme-light min-h-screen p-4 md:p-6 lg:p-8 theme-transition">
+    <div class="max-w-7xl mx-auto">
+        <!-- Header with Theme Switcher -->
+        <div class="flex justify-between items-center mb-8">
+            <div class="text-left">
+                <h1 class="text-3xl md:text-4xl lg:text-5xl font-bold mb-2 gradient-text">
+                    App Search Hub
+                </h1>
+                <p class="text-sm md:text-base opacity-60 flex items-center gap-2">
+                    <i data-lucide="sparkles" class="w-4 h-4"></i>
+                    Search across multiple app stores simultaneously
+                </p>
+            </div>
+
+            <!-- Theme Switcher -->
+            <div class="relative">
+                <button id="theme-toggle" class="p-3 rounded-xl border theme-card theme-transition hover:scale-105 hover:shadow-lg flex items-center gap-2">
+                    <i data-lucide="palette" class="w-5 h-5"></i>
+                    <span class="hidden sm:block">Theme</span>
+                </button>
+                
+                <div id="theme-menu" class="hidden absolute right-0 top-14 theme-card rounded-xl border shadow-2xl p-4 z-50 glass-effect">
+                    <div class="grid grid-cols-4 gap-3 min-w-[280px]">
+                        <button data-theme="light" class="theme-option p-3 rounded-xl border-2 theme-card theme-transition group relative overflow-hidden flex flex-col items-center justify-center">
+                            <i data-lucide="sun" class="w-4 h-4 mb-1"></i>
+                            <span class="text-xs mt-1">Light</span>
+                        </button>
+                        <button data-theme="dark" class="theme-option p-3 rounded-xl border-2 theme-card theme-transition group relative overflow-hidden flex flex-col items-center justify-center">
+                            <i data-lucide="moon" class="w-4 h-4 mb-1"></i>
+                            <span class="text-xs mt-1">Dark</span>
+                        </button>
+                        <button data-theme="brown" class="theme-option p-3 rounded-xl border-2 theme-card theme-transition group relative overflow-hidden flex flex-col items-center justify-center">
+                            <div class="w-4 h-4 bg-amber-600 rounded-full mb-1"></div>
+                            <span class="text-xs mt-1">Sepia</span>
+                        </button>
+                        <button data-theme="gray" class="theme-option p-3 rounded-xl border-2 theme-card theme-transition group relative overflow-hidden flex flex-col items-center justify-center">
+                            <div class="w-4 h-4 bg-gray-600 rounded-full mb-1"></div>
+                            <span class="text-xs mt-1">Gray</span>
+                        </button>
+                        <button data-theme="green" class="theme-option p-3 rounded-xl border-2 theme-card theme-transition group relative overflow-hidden flex flex-col items-center justify-center">
+                            <i data-lucide="leaf" class="w-4 h-4 text-emerald-600 mb-1"></i>
+                            <span class="text-xs mt-1">Forest</span>
+                        </button>
+                        <button data-theme="blue" class="theme-option p-3 rounded-xl border-2 theme-card theme-transition group relative overflow-hidden flex flex-col items-center justify-center">
+                            <div class="w-4 h-4 bg-blue-600 rounded-full mb-1"></div>
+                            <span class="text-xs mt-1">Ocean</span>
+                        </button>
+                        <button data-theme="purple" class="theme-option p-3 rounded-xl border-2 theme-card theme-transition group relative overflow-hidden flex flex-col items-center justify-center">
+                            <div class="w-4 h-4 bg-purple-600 rounded-full mb-1"></div>
+                            <span class="text-xs mt-1">Lavender</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Search Section -->
+        <div class="theme-card rounded-2xl border p-6 mb-8 shadow-lg glass-effect theme-transition">
+            <div class="space-y-6">
+                <!-- Search Mode Toggle -->
+                <div class="flex flex-col sm:flex-row gap-4">
+                    <div class="flex rounded-lg overflow-hidden border theme-border w-full sm:w-auto">
+                        <button id="web-search-mode" class="search-mode-btn active py-2 px-4 font-medium transition-all flex-1">
+                            <i data-lucide="globe" class="w-4 h-4 inline mr-2"></i>
+                            Web Search
+                        </button>
+                        <button id="appstore-search-mode" class="search-mode-btn py-2 px-4 font-medium transition-all flex-1">
+                            <i data-lucide="smartphone" class="w-4 h-4 inline mr-2"></i>
+                            App Store Search
+                        </button>
+                    </div>
+                    
+                    <div class="flex items-center gap-3 text-sm cursor-pointer sm:ml-auto">
+                        <div class="relative">
+                            <input
+                                type="checkbox"
+                                id="open-in-app"
+                                class="sr-only"
+                            />
+                            <div id="toggle-switch" class="w-10 h-6 rounded-full bg-gray-300 transition-all duration-300">
+                                <div id="toggle-circle" class="absolute top-1 w-4 h-4 rounded-full bg-white transition-transform duration-300 transform translate-x-1"></div>
+                            </div>
+                        </div>
+                        <span class="opacity-70">Open in App</span>
+                    </div>
+                </div>
+                
+                <!-- Search Bar -->
+                <div class="flex flex-col sm:flex-row gap-4">
+                    <div class="flex-1 relative">
+                        <i data-lucide="search" class="absolute left-4 top-1/2 transform -translate-y-1/2 opacity-60 w-5 h-5"></i>
+                        <input
+                            type="text"
+                            id="search-input"
+                            placeholder="Search for apps, games, or anything..."
+                            class="w-full pl-12 pr-4 py-4 rounded-xl border-2 theme-input focus:outline-none focus:ring-4 focus:ring-opacity-30 placeholder-opacity-60 theme-transition"
+                        />
+                    </div>
+                    <button
+                        id="search-button"
+                        class="px-8 py-4 rounded-xl theme-button font-semibold transition-all duration-300 flex items-center justify-center gap-3 min-w-[140px]"
+                    >
+                        <i data-lucide="search" class="w-5 h-5"></i>
+                        SEARCH
+                    </button>
+                </div>
+
+                <!-- Web Search Options -->
+                <div id="web-search-options" class="flex flex-col sm:flex-row sm:items-center gap-4 pt-4 border-t border-opacity-30">
+                    <span class="text-sm font-semibold opacity-70 flex items-center gap-2">
+                        Search Engine:
+                    </span>
+                    <div class="flex flex-wrap gap-3" id="search-engines">
+                        <!-- Search engines will be added here by JavaScript -->
+                    </div>
+                </div>
+                
+                <!-- App Store Search Options -->
+                <div id="appstore-search-options" class="hidden flex-col gap-4 pt-4 border-t border-opacity-30">
+                    <div class="flex flex-col sm:flex-row sm:items-center gap-4">
+                        <span class="text-sm font-semibold opacity-70 flex items-center gap-2">
+                            Select App Stores:
+                        </span>
+                        <div class="flex items-center gap-2">
+                            <button id="select-all-stores" class="text-sm px-3 py-1 rounded-lg theme-card border theme-border hover:opacity-80 transition-opacity">
+                                Select All
+                            </button>
+                            <button id="deselect-all-stores" class="text-sm px-3 py-1 rounded-lg theme-card border theme-border hover:opacity-80 transition-opacity">
+                                Deselect All
+                            </button>
+                        </div>
+                        <span id="selected-count" class="text-sm opacity-70 sm:ml-auto">
+                            0 stores selected
+                        </span>
+                    </div>
+                    <div class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-3 max-h-40 overflow-y-auto p-2" id="store-selection">
+                        <!-- Store selection will be added here by JavaScript -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- App Stores Grid -->
+        <div class="mb-6 flex justify-between items-center">
+            <h2 class="text-xl font-semibold">All App Stores</h2>
+            <div class="text-sm opacity-70">
+                Click any store to search individually
+            </div>
+        </div>
+        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-5" id="app-stores">
+            <!-- App stores will be added here by JavaScript -->
+        </div>
+
+        <!-- Footer -->
+        <div class="mt-12 text-center opacity-50">
+            <p class="text-sm flex items-center justify-center gap-2">
+                <i data-lucide="sparkles" class="w-4 h-4"></i>
+                Select multiple app stores for simultaneous search
+                <i data-lucide="sparkles" class="w-4 h-4"></i>
+            </p>
+        </div>
+    </div>
+
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+        
+        // Data for search engines and app stores
+        const searchEngines = [
+            { 
+                id: 'startpage', 
+                name: 'Startpage', 
+                url: 'https://www.startpage.com/sp/search?query=',
+                icon: 'https://www.google.com/s2/favicons?domain=startpage.com&sz=128'
+            },
+            { 
+                id: 'duckduckgo', 
+                name: 'DuckDuckGo', 
+                url: 'https://duckduckgo.com/?q=',
+                icon: 'https://www.google.com/s2/favicons?domain=duckduckgo.com&sz=128'
+            },
+            { 
+                id: 'google', 
+                name: 'Google', 
+                url: 'https://www.google.com/search?q=',
+                icon: 'https://www.google.com/s2/favicons?domain=google.com&sz=128'
+            },
+            { 
+                id: 'bing', 
+                name: 'Bing', 
+                url: 'https://www.bing.com/search?q=',
+                icon: 'https://www.google.com/s2/favicons?domain=bing.com&sz=128'
+            },
+            { 
+                id: 'ecosia', 
+                name: 'Ecosia', 
+                url: 'https://www.ecosia.org/search?q=',
+                icon: 'https://www.google.com/s2/favicons?domain=ecosia.org&sz=128'
+            }
+        ];
+
+        const appStores = [
+            {
+                id: 'playstore',
+                name: 'Google Play',
+                searchUrl: 'https://play.google.com/store/search?q=',
+                appUrl: 'market://search?q=',
+                homeUrl: 'https://play.google.com/store',
+                icon: 'https://www.google.com/s2/favicons?domain=play.google.com&sz=128'
+            },
+            {
+                id: 'appstore',
+                name: 'App Store',
+                searchUrl: 'https://apps.apple.com/us/search?term=',
+                appUrl: 'itms-apps://apps.apple.com/us/search?term=',
+                homeUrl: 'https://apps.apple.com',
+                icon: 'https://www.google.com/s2/favicons?domain=apps.apple.com&sz=128'
+            },
+            {
+                id: 'uptodown',
+                name: 'Uptodown',
+                searchUrl: 'https://en.uptodown.com/android/search?q=',
+                appUrl: 'https://en.uptodown.com/android/search?q=',
+                homeUrl: 'https://en.uptodown.com/android',
+                icon: 'https://www.google.com/s2/favicons?domain=uptodown.com&sz=128'
+            },
+            {
+                id: 'apkpure',
+                name: 'APKPure',
+                searchUrl: 'https://apkpure.com/search?q=',
+                appUrl: 'https://apkpure.com/search?q=',
+                homeUrl: 'https://apkpure.com',
+                icon: 'https://www.google.com/s2/favicons?domain=apkpure.com&sz=128'
+            },
+            {
+                id: 'fdroid',
+                name: 'F-Droid',
+                searchUrl: 'https://search.f-droid.org/?q=',
+                appUrl: 'https://search.f-droid.org/?q=',
+                homeUrl: 'https://f-droid.org',
+                icon: 'https://www.google.com/s2/favicons?domain=f-droid.org&sz=128'
+            },
+            {
+                id: 'apkmirror',
+                name: 'APKMirror',
+                searchUrl: 'https://www.apkmirror.com/?s=',
+                appUrl: 'https://www.apkmirror.com/?s=',
+                homeUrl: 'https://www.apkmirror.com',
+                icon: 'https://www.google.com/s2/favicons?domain=apkmirror.com&sz=128'
+            },
+            {
+                id: 'amazon',
+                name: 'Amazon Appstore',
+                searchUrl: 'https://www.amazon.com/s?k=',
+                appUrl: 'https://www.amazon.com/s?k=',
+                homeUrl: 'https://www.amazon.com/appstore',
+                icon: 'https://www.google.com/s2/favicons?domain=amazon.com&sz=128'
+            },
+            {
+                id: 'galaxy',
+                name: 'Galaxy Store',
+                searchUrl: 'https://galaxystore.samsung.com/search/',
+                appUrl: 'samsungapps://Search?keyword=',
+                homeUrl: 'https://galaxystore.samsung.com',
+                icon: 'https://www.google.com/s2/favicons?domain=galaxystore.samsung.com&sz=128'
+            },
+            {
+                id: 'appgallery',
+                name: 'AppGallery',
+                searchUrl: 'https://appgallery.huawei.com/search/',
+                appUrl: 'appmarket://search?keyword=',
+                homeUrl: 'https://appgallery.huawei.com',
+                icon: 'https://www.google.com/s2/favicons?domain=appgallery.huawei.com&sz=128'
+            },
+            {
+                id: 'apkcombo',
+                name: 'APKCombo',
+                searchUrl: 'https://apkcombo.com/search/',
+                appUrl: 'https://apkcombo.com/search/',
+                homeUrl: 'https://apkcombo.com',
+                icon: 'https://www.google.com/s2/favicons?domain=apkcombo.com&sz=128'
+            },
+            {
+                id: 'aptoide',
+                name: 'Aptoide',
+                searchUrl: 'https://en.aptoide.com/search?query=',
+                appUrl: 'https://en.aptoide.com/search?query=',
+                homeUrl: 'https://en.aptoide.com',
+                icon: 'https://www.google.com/s2/favicons?domain=aptoide.com&sz=128'
+            },
+            {
+                id: 'migetapps',
+                name: 'Mi GetApps',
+                searchUrl: 'https://global.app.mi.com/search?keywords=',
+                appUrl: 'mimarket://search?keyword=',
+                homeUrl: 'https://global.app.mi.com',
+                icon: 'https://www.google.com/s2/favicons?domain=app.mi.com&sz=128'
+            }
+        ];
+
+        // State variables
+        let currentTheme = 'light';
+        let selectedEngine = 'startpage';
+        let openInApp = false;
+        let searchQuery = '';
+        let searchMode = 'web'; // 'web' or 'appstore'
+        let selectedStores = [];
+
+        // DOM elements
+        const themeToggle = document.getElementById('theme-toggle');
+        const themeMenu = document.getElementById('theme-menu');
+        const themeOptions = document.querySelectorAll('.theme-option');
+        const searchInput = document.getElementById('search-input');
+        const searchButton = document.getElementById('search-button');
+        const searchEnginesContainer = document.getElementById('search-engines');
+        const appStoresContainer = document.getElementById('app-stores');
+        const openInAppCheckbox = document.getElementById('open-in-app');
+        const toggleSwitch = document.getElementById('toggle-switch');
+        const toggleCircle = document.getElementById('toggle-circle');
+        const webSearchModeBtn = document.getElementById('web-search-mode');
+        const appstoreSearchModeBtn = document.getElementById('appstore-search-mode');
+        const webSearchOptions = document.getElementById('web-search-options');
+        const appstoreSearchOptions = document.getElementById('appstore-search-options');
+        const storeSelectionContainer = document.getElementById('store-selection');
+        const selectAllStoresBtn = document.getElementById('select-all-stores');
+        const deselectAllStoresBtn = document.getElementById('deselect-all-stores');
+        const selectedCountSpan = document.getElementById('selected-count');
+
+        // Initialize the app
+        function init() {
+            renderSearchEngines();
+            renderAppStores();
+            renderStoreSelection();
+            setupEventListeners();
+            updateSelectedCount();
+        }
+
+        // Render search engine options
+        function renderSearchEngines() {
+            searchEnginesContainer.innerHTML = '';
+            
+            searchEngines.forEach(engine => {
+                const button = document.createElement('button');
+                button.className = `px-4 py-2.5 rounded-lg border transition-all duration-300 flex items-center gap-2 ${
+                    selectedEngine === engine.id 
+                    ? 'theme-button border-transparent text-white shadow-md' 
+                    : 'theme-card theme-hover'
+                }`;
+                button.innerHTML = `
+                    <img src="${engine.icon}" alt="${engine.name}" class="w-4 h-4" onerror="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(engine.name)}&background=64748b&color=fff&size=32'">
+                    ${engine.name}
+                `;
+                button.addEventListener('click', () => {
+                    selectedEngine = engine.id;
+                    renderSearchEngines();
+                });
+                
+                searchEnginesContainer.appendChild(button);
+            });
+        }
+
+        // Render app store cards
+        function renderAppStores() {
+            appStoresContainer.innerHTML = '';
+            
+            appStores.forEach(store => {
+                const card = document.createElement('div');
+                card.className = 'theme-card rounded-2xl border-2 p-5 transition-all duration-300 cursor-pointer card-hover glass-effect group relative overflow-hidden';
+                card.innerHTML = `
+                    <!-- Store Icon -->
+                    <div class="w-18 h-18 mx-auto mb-4 rounded-2xl bg-opacity-10 flex items-center justify-center p-3 group-hover:scale-110 transition-transform duration-300">
+                        <img 
+                            src="${store.icon}"
+                            alt="${store.name}"
+                            class="w-12 h-12 object-contain drop-shadow-sm"
+                            onerror="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(store.name)}&background=64748b&color=fff&size=96'"
+                        />
+                    </div>
+
+                    <!-- Store Name -->
+                    <h3 class="text-sm font-semibold text-center opacity-90 group-hover:opacity-100 transition-opacity">
+                        ${store.name}
+                    </h3>
+
+                    <!-- Hover Effect -->
+                    <div class="absolute inset-0 bg-gradient-to-br from-current to-current opacity-0 group-hover:opacity-5 transition-opacity duration-300 rounded-2xl"></div>
+                `;
+                card.addEventListener('click', () => handleSearchInStore(store));
+                
+                appStoresContainer.appendChild(card);
+            });
+        }
+
+        // Render store selection for app store search
+        function renderStoreSelection() {
+            storeSelectionContainer.innerHTML = '';
+            
+            appStores.forEach(store => {
+                const storeItem = document.createElement('div');
+                storeItem.className = `flex flex-col items-center p-2 rounded-lg cursor-pointer transition-all ${
+                    selectedStores.includes(store.id) ? 'selected-store theme-hover' : 'theme-card theme-hover'
+                }`;
+                storeItem.innerHTML = `
+                    <div class="relative">
+                        <img 
+                            src="${store.icon}"
+                            alt="${store.name}"
+                            class="w-8 h-8 object-contain mb-1"
+                            onerror="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(store.name)}&background=64748b&color=fff&size=32'"
+                        />
+                        <div class="store-checkbox ${selectedStores.includes(store.id) ? 'checked' : ''}"></div>
+                    </div>
+                    <span class="text-xs text-center">${store.name}</span>
+                `;
+                storeItem.addEventListener('click', () => toggleStoreSelection(store.id));
+                
+                storeSelectionContainer.appendChild(storeItem);
+            });
+        }
+
+        // Toggle store selection
+        function toggleStoreSelection(storeId) {
+            if (selectedStores.includes(storeId)) {
+                selectedStores = selectedStores.filter(id => id !== storeId);
+            } else {
+                selectedStores.push(storeId);
+            }
+            renderStoreSelection();
+            updateSelectedCount();
+        }
+
+        // Update selected stores count
+        function updateSelectedCount() {
+            const count = selectedStores.length;
+            selectedCountSpan.textContent = `${count} store${count !== 1 ? 's' : ''} selected`;
+        }
+
+        // Set up event listeners
+        function setupEventListeners() {
+            // Theme toggle
+            themeToggle.addEventListener('click', () => {
+                themeMenu.classList.toggle('hidden');
+            });
+
+            // Theme selection
+            themeOptions.forEach(option => {
+                option.addEventListener('click', (e) => {
+                    const theme = e.currentTarget.getAttribute('data-theme');
+                    setTheme(theme);
+                    themeMenu.classList.add('hidden');
+                });
+            });
+
+            // Search input
+            searchInput.addEventListener('input', (e) => {
+                searchQuery = e.target.value;
+            });
+
+            searchInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    handleSearch();
+                }
+            });
+
+            // Search button
+            searchButton.addEventListener('click', handleSearch);
+
+            // Open in app toggle
+            openInAppCheckbox.addEventListener('change', (e) => {
+                openInApp = e.target.checked;
+                if (openInApp) {
+                    toggleSwitch.classList.remove('bg-gray-300');
+                    toggleSwitch.classList.add('theme-button');
+                    toggleCircle.style.transform = 'translateX(1.5rem)';
+                } else {
+                    toggleSwitch.classList.remove('theme-button');
+                    toggleSwitch.classList.add('bg-gray-300');
+                    toggleCircle.style.transform = 'translateX(0.25rem)';
+                }
+            });
+
+            // Search mode toggle
+            webSearchModeBtn.addEventListener('click', () => {
+                setSearchMode('web');
+            });
+
+            appstoreSearchModeBtn.addEventListener('click', () => {
+                setSearchMode('appstore');
+            });
+
+            // Store selection buttons
+            selectAllStoresBtn.addEventListener('click', () => {
+                selectedStores = appStores.map(store => store.id);
+                renderStoreSelection();
+                updateSelectedCount();
+            });
+
+            deselectAllStoresBtn.addEventListener('click', () => {
+                selectedStores = [];
+                renderStoreSelection();
+                updateSelectedCount();
+            });
+
+            // Close theme menu when clicking outside
+            document.addEventListener('click', (e) => {
+                if (!themeToggle.contains(e.target) && !themeMenu.contains(e.target)) {
+                    themeMenu.classList.add('hidden');
+                }
+            });
+        }
+
+        // Set search mode
+        function setSearchMode(mode) {
+            searchMode = mode;
+            
+            if (mode === 'web') {
+                webSearchModeBtn.classList.add('active');
+                appstoreSearchModeBtn.classList.remove('active');
+                webSearchOptions.classList.remove('hidden');
+                appstoreSearchOptions.classList.add('hidden');
+            } else {
+                webSearchModeBtn.classList.remove('active');
+                appstoreSearchModeBtn.classList.add('active');
+                webSearchOptions.classList.add('hidden');
+                appstoreSearchOptions.classList.remove('hidden');
+            }
+        }
+
+        // Set theme function
+        function setTheme(theme) {
+            currentTheme = theme;
+            document.body.className = `theme-${theme} min-h-screen p-4 md:p-6 lg:p-8 theme-transition`;
+            
+            // Update all theme cards
+            document.querySelectorAll('.theme-card').forEach(card => {
+                card.className = card.className.replace(/theme-\w+/g, '') + ` theme-card theme-transition`;
+            });
+            
+            // Update search engines
+            renderSearchEngines();
+            
+            // Update store selection
+            renderStoreSelection();
+            
+            // Update toggle if openInApp is enabled
+            if (openInApp) {
+                toggleSwitch.className = toggleSwitch.className.replace(/bg-\w+-\d+/, '') + ' theme-button';
+            }
+            
+            // Refresh icons
+            setTimeout(() => {
+                lucide.createIcons();
+            }, 100);
+        }
+
+        // Handle search in store
+        function handleSearchInStore(store) {
+            if (!searchQuery.trim()) {
+                // If no search query, open the store homepage
+                window.open(store.homeUrl, '_blank');
+                return;
+            }
+            const url = openInApp ? store.appUrl : store.searchUrl;
+            window.open(url + encodeURIComponent(searchQuery), '_blank');
+        }
+
+        // Handle search based on mode
+        function handleSearch() {
+            if (!searchQuery.trim()) return;
+            
+            if (searchMode === 'web') {
+                // Web search mode
+                const engine = searchEngines.find(e => e.id === selectedEngine);
+                window.open(engine.url + encodeURIComponent(searchQuery), '_blank');
+            } else {
+                // App store search mode
+                if (selectedStores.length === 0) {
+                    alert('Please select at least one app store to search in.');
+                    return;
+                }
+                
+                // Open each selected store in a new tab
+                selectedStores.forEach(storeId => {
+                    const store = appStores.find(s => s.id === storeId);
+                    const url = openInApp ? store.appUrl : store.searchUrl;
+                    window.open(url + encodeURIComponent(searchQuery), '_blank');
+                });
+            }
+        }
+
+        // Initialize the app
+        init();
+    </script>
+</body>
+</html>
